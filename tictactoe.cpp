@@ -11,27 +11,38 @@ void clearBoard(char** board) {
 }
   
 
-void printBoard(char** board, char* lett)
+void printBoard(char** board)
 {
+  char lett[3] = {'a', 'b', 'c'};
   cout << " 123" << endl;
   for(int i = 0; i < 3; i++) {
-    char outl[4];
+    char outl[5];
     outl[0] = lett[i];
     for(int j = 0; j < 3; j++) {
       outl[1 + j] = board[i][j];
     }
+    outl[5] = '\0';
     cout << outl << endl;
   }
-  
 }
 
-int checkWin(char** board) {
+//https://codehs.com/sandbox/pinksalmon0189/tictactoe
+int checkWin(char** board, int coords[2]) {
+  if(board[coords[1]][0] == board[coords[1]][1] && board[coords[1]][2] == board[coords[1]][1] ||
+     board[0][coords[0]] == board[1][coords[0]] && board[2][coords[0]] == board[1][coords[0]]) {
+    return 1;
+  }
+  else if(board[1][1] != ' ') {
+    if(board[0][0] == board[1][1] && board[1][1] == board[2][2] ||
+       board[2][0] == board[1][1] && board[1][1] == board[0][2]) {
+      return 1;
+    }
+  }
   return 0;
 }
 
 
-int place(char** board, int coords[2], bool* playerptr) {
-  bool player = playerptr[0];
+int place(char** board, int coords[2], bool &player) {
   if(board[coords[0]][coords[1]] == ' ') {
     if(player) {
       board[coords[0]][coords[1]] = 'x';
@@ -40,24 +51,23 @@ int place(char** board, int coords[2], bool* playerptr) {
       board[coords[0]][coords[1]] = 'o';
     }
     player = !player;
+    printBoard(board);
     }
   else {
-    cout << "Invalid placement";
-  }
-  int win = checkWin(board);
-  if(checkWin(board)) {
+    cout << "Invalid placement" << endl;
     return 0;
+  }
+  if(checkWin(board, coords)) {
+    return 1;
   }
   return 0;
 }
 int main()
 {
-  char lett[3] = {'a', 'b', 'c'};
-  char* lettptr = lett;
   char* board[3];
   char** boardptr = board;
   bool playing = true;
-  char input[2];
+  char input[3];
   int coords[2];
   bool player = true;
   int win = 0;
@@ -70,13 +80,12 @@ int main()
     board[i] = b;
   }
   
-  printBoard(boardptr, lettptr);
+  printBoard(boardptr);
   
   while(playing) {
+ 
     cout << "Enter a coordinate point: ";
-    cin.get(input, 2);
-    cin.get();
-    cout << input;
+    cin >> input;
     
     if(input[0] == 'a') {
       coords[0] = 0;
@@ -87,11 +96,9 @@ int main()
     else if(input[0] == 'c') {
       coords[0] = 2;
     }
-    coords[1] = input[1];
-    cout << coords[0] << coords[1] << endl;
-    win = place(boardptr, coords, &player);
-    printBoard(boardptr, lettptr);
-    playing = false;
+    //https://stackoverflow.com/questions/5029840/convert-char-to-int-in-c-and-c
+    coords[1] = input[1] - '0' - 1;
+    win = place(boardptr, coords, player);
   }
   
 }
