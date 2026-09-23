@@ -7,7 +7,11 @@ Elijah Chan 9/8/2026
 using namespace std;
 
 void clearBoard(char** board) {
-  return;
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 3; j++) {
+      board[i][j] = ' ';
+    }
+  }
 }
   
 
@@ -28,8 +32,9 @@ void printBoard(char** board)
 
 //https://codehs.com/sandbox/pinksalmon0189/tictactoe
 int checkWin(char** board, int coords[2]) {
-  if(board[coords[1]][0] == board[coords[1]][1] && board[coords[1]][2] == board[coords[1]][1] ||
-     board[0][coords[0]] == board[1][coords[0]] && board[2][coords[0]] == board[1][coords[0]]) {
+  if(board[coords[0]][0] == board[coords[0]][1] && board[coords[0]][2] == board[coords[0]][1] ||
+     board[0][coords[1]] == board[1][coords[1]] && board[2][coords[1]] == board[1][coords[1]]) {
+    cout << "true" << endl;
     return 1;
   }
   else if(board[1][1] != ' ') {
@@ -45,10 +50,10 @@ int checkWin(char** board, int coords[2]) {
 int place(char** board, int coords[2], bool &player) {
   if(board[coords[0]][coords[1]] == ' ') {
     if(player) {
-      board[coords[0]][coords[1]] = 'x';
+      board[coords[0]][coords[1]] = 'o';
     }
     else {
-      board[coords[0]][coords[1]] = 'o';
+      board[coords[0]][coords[1]] = 'x';
     }
     player = !player;
     printBoard(board);
@@ -58,6 +63,7 @@ int place(char** board, int coords[2], bool &player) {
     return 0;
   }
   if(checkWin(board, coords)) {
+    player = !player;
     return 1;
   }
   return 0;
@@ -69,8 +75,9 @@ int main()
   bool playing = true;
   char input[3];
   int coords[2];
-  bool player = true;
+  bool player = false;
   int win = 0;
+  int scores[2] = {0, 0};
   
   for(int i = 0; i < 3; i++) {
     char* b = new char[3];
@@ -99,6 +106,14 @@ int main()
     //https://stackoverflow.com/questions/5029840/convert-char-to-int-in-c-and-c
     coords[1] = input[1] - '0' - 1;
     win = place(boardptr, coords, player);
+    if(win) {
+      cout << "Player " << player + 1 << " wins!" << endl;
+      scores[player]++;
+      cout << "Player 1: " << scores[0] << "\nPlayer 2: " << scores[1] << endl;
+      clearBoard(boardptr);
+      player = false;
+      printBoard(boardptr);
+    }
   }
   
 }
